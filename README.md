@@ -55,6 +55,8 @@ Run the agent:
 npm run dev
 ```
 
+At startup, the agent checks `/models` first. If mimOE Studio is not running, the API URL is wrong, or the configured model is not loaded, the agent stops with a clear error message before asking for text.
+
 ## Approach
 
 The agent is intentionally small. It does one job: take a piece of English text and ask the local model to correct grammar, spelling, and punctuation while preserving the original meaning.
@@ -88,3 +90,14 @@ mimOE Studio runs the model locally and exposes the inference API. The Node.js a
 ## Notes
 
 Small local models can be inconsistent with formatting instructions, especially on longer or non-English text. For best results, use short English inputs or load a stronger local model in mimOE Studio.
+
+## Troubleshooting
+
+If startup fails:
+
+- Confirm mimOE Studio is open.
+- Confirm a model is loaded in Model View.
+- Check that `MIMOE_BASE_URL` matches the API URL shown by mimOE Studio.
+- Check that `MIMOE_MODEL` matches one of the models returned by `/models`.
+
+If a request times out, the model may still be loading or may be too slow for the current request. Wait for the model to finish loading and try again.

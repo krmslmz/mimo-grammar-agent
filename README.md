@@ -21,7 +21,7 @@ Corrected: I have a meeting tomorrow, and I need to send the report.
 ## Requirements
 
 - Node.js 18 or newer.
-- mimOE Studio installed and running.
+- mimOE Studio installed and running: https://developer.mimik.com/mimOE-studio-early-access-download-v2
 - A local model loaded in mimOE Studio Model View.
 - The local API endpoint from the API button in Model View.
 

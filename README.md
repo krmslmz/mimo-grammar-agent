@@ -7,6 +7,7 @@ The goal is to keep the project simple: type a sentence, send it to the local Op
 ## What It Does
 
 - Accepts text from the terminal.
+- Inspects the input locally with a small utility step.
 - Sends the text to a local mimOE chat completions endpoint.
 - Uses a narrow system prompt for grammar, spelling, and punctuation correction.
 - Prints only the corrected text returned by the local model.
@@ -15,6 +16,13 @@ Example:
 
 ```txt
 Text: i has a meeting tomorrow and i need send the report
+
+Agent trace:
+- local tool: inspected 11 word(s), 1 sentence(s), 51 character(s)
+- selected action: grammar_correction
+- note: capitalization cleanup may be needed
+- model call: /chat/completions
+
 Corrected: I have a meeting tomorrow, and I need to send the report.
 ```
 
@@ -63,6 +71,8 @@ The agent is intentionally small. It does one job: take a piece of English text 
 
 Each user input is sent as a single `chat/completions` request. The response is read from `choices[0].message.content` and printed back to the terminal.
 
+The agent also includes a small local inspection step before the model call. This is intentionally simple: it counts words, sentences, and characters, then selects the grammar correction action. The trace is printed so the flow is easy to follow without adding a heavier agent framework.
+
 ## Framework and Tooling Choices
 
 This project uses a minimal BYO Framework approach:
@@ -70,6 +80,7 @@ This project uses a minimal BYO Framework approach:
 - Node.js for the command-line runtime.
 - Native `fetch` for direct HTTP requests.
 - `dotenv` for local configuration.
+- A small local text inspection utility for the agent trace.
 - mimOE Studio as the local model host.
 - `smollm-360m` as the local test model.
 
@@ -79,7 +90,8 @@ I used direct API calls instead of LangChain, LlamaIndex, or CrewAI because the 
 
 ```txt
 Terminal input
-  -> Node.js grammar agent
+  -> local text inspection
+  -> grammar correction action
   -> mimOE Studio local OpenAI-compatible API
   -> loaded local model
   -> corrected text response

@@ -13,6 +13,44 @@ const MIMOE_API_KEY = (process.env.MIMOE_API_KEY || "1234").trim();
 const MIMOE_MODEL = (process.env.MIMOE_MODEL || "smollm-360m").trim();
 const REQUEST_TIMEOUT_MS = 15000;
 
+function inspectText(text) {
+  const trimmed = text.trim();
+  const words = trimmed.match(/[A-Za-z0-9']+/g) || [];
+  const sentences = trimmed
+    .split(/[.!?]+/)
+    .map((sentence) => sentence.trim())
+    .filter(Boolean);
+
+  return {
+    characters: trimmed.length,
+    words: words.length,
+    sentences: sentences.length || (trimmed ? 1 : 0),
+    needsCapitalization: /^[a-z]/.test(trimmed) || /\bi\b/.test(trimmed),
+  };
+}
+
+function chooseAction(inspection) {
+  if (inspection.words === 0) {
+    return "skip";
+  }
+
+  return "grammar_correction";
+}
+
+function printAgentTrace(inspection, action) {
+  console.log("\nAgent trace:");
+  console.log(
+    `- local tool: inspected ${inspection.words} word(s), ${inspection.sentences} sentence(s), ${inspection.characters} character(s)`
+  );
+  console.log(`- selected action: ${action}`);
+
+  if (inspection.needsCapitalization) {
+    console.log("- note: capitalization cleanup may be needed");
+  }
+
+  console.log("- model call: /chat/completions");
+}
+
 function validateConfig() {
   const missing = [];
 
@@ -219,6 +257,11 @@ async function main() {
     if (!userInput.trim()) {
       continue;
     }
+
+    const inspection = inspectText(userInput);
+    const action = chooseAction(inspection);
+
+    printAgentTrace(inspection, action);
 
     try {
       const answer = await correctText(userInput);

@@ -1,0 +1,16 @@
+{
+  "name": "agent-mimik",
+  "version": "1.0.0",
+  "description": "Local grammar correction agent for the mimOE Studio OpenAI-compatible endpoint.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^17.4.2"
+  }
+}
